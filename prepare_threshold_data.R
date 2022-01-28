@@ -19,11 +19,26 @@ fixed_speeds <- case_when(test$stage == 1 ~ 3,
           test$stage == 2 ~ round(mar22_105$speed_2mi*.75,1),
           test$stage == 3 ~ round(mar22_105$speed_2mi*0.3,1),
           test$stage == 4 ~ round(mar22_105$speed_2mi*0.635,1),
-          test$stage == 5 ~ round(mar22_105$speed_2mi*0.45,1)
+          test$stage == 5 ~ round(mar22_105$speed_2mi*0.45,1),
+          test$stage %in% c(6:37) ~ 
+            round((mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
+            mar22_105$speed_2mi*0.45, 1),
+          test$stage > 37 ~ round(mar22_105$speed_2mi, 1)
           )
 fixed_speeds
+fixed_grades <- case_when(test$stage < 38 ~ 1,
+                          test$stage >= 38 ~ 1 + (test$stage - 37) * 0.5)
+fixed_grades
+test %>% 
+  mutate(fixed_speeds = fixed_speeds,
+         fixed_grades = fixed_grades) %>% 
+  select(contains("speed"),
+         contains("grade"))
 
+test %>% View
 
+(mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
+  mar22_105$speed_2mi*0.45
 
 stages <- 1:61
 
