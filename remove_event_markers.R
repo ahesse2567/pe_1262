@@ -58,10 +58,10 @@ tidy_test <- function(df, slim_cols=FALSE){
 #a function to clean exercise tests
   #supply file name with path
 clean_test <- function(x){
-  
+  # browser()
   test <- read.table(file = x, sep = "\t", na.strings = c("NA", ""), header = TRUE)
   file_name <- x
-  file_name <- str_remove(file_name, "./data/raw/")
+  file_name <- str_remove(file_name, "data/raw/")
   file_name <- str_remove(file_name, ".txt")
   
   test <- janitor::remove_empty(test, which = "cols") #cols first to get rid of empty columns
