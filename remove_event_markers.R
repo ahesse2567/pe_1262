@@ -8,13 +8,15 @@ tidy_test <- function(df, slim_cols=FALSE){
     drop_na()
   
   df <- df %>%
+    select(-contains("clock")) %>% 
     separate(Time, into = c("M1", "S1"), sep = ":") %>%
     separate(Ex.Time, into = c("M2", "S2"), sep = ":") %>% 
-    separate(Time..Clock., into = c("M3", "S3"), sep = ":") %>% 
+    # separate(Time..Clock., into = c("H3", "M3", "S3"), sep = ":") %>% 
+    # time.clock is just going to be deleted for now
     mutate(across(where(is.character), as.numeric)) %>%
     mutate(time = (M1 + (S1/60)), .keep = "unused") %>% 
-    mutate(ex_time = (M2 + (S2/60)), .keep = "unused") %>% 
-    mutate(clock_time = (M3 + (S3/60)), .keep = "unused")
+    mutate(ex_time = (M2 + (S2/60)), .keep = "unused")
+    # mutate(clock_time = (M3 + (S3/60)), .keep = "unused")
   
   vo2_cols <- grep(pattern = "VO2", x = colnames(df))
   
@@ -86,7 +88,7 @@ clean_test <- function(x){
   #Process test for analysis in R
     
   cleaned_test <- tidy_test(exc_test, slim_cols = FALSE) #for analysis in R
-    print(nrow(cleaned_test))
+    # print(nrow(cleaned_test))
     
     #write exercise data
   write_csv(cleaned_test, file = paste0("./data/processed/", file_name, ".csv"), eol="\r\n")
