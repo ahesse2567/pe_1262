@@ -8,9 +8,13 @@ tidy_test <- function(df, slim_cols=FALSE){
     drop_na()
   
   df <- df %>%
-    separate(Time, into = c("M", "S"), sep = ":") %>% 
+    separate(Time, into = c("M1", "S1"), sep = ":") %>%
+    separate(Ex.Time, into = c("M2", "S2"), sep = ":") %>% 
+    separate(Time..Clock., into = c("M3", "S3"), sep = ":") %>% 
     mutate(across(where(is.character), as.numeric)) %>%
-    mutate(time = (M + (S/60)), .keep = "unused")
+    mutate(time = (M1 + (S1/60)), .keep = "unused") %>% 
+    mutate(ex_time = (M2 + (S2/60)), .keep = "unused") %>% 
+    mutate(clock_time = (M3 + (S3/60)), .keep = "unused")
   
   vo2_cols <- grep(pattern = "VO2", x = colnames(df))
   
@@ -52,10 +56,10 @@ tidy_test <- function(df, slim_cols=FALSE){
 #a function to clean exercise tests
   #supply file name with path
 clean_test <- function(x){
-  browser()
+  
   test <- read.table(file = x, sep = "\t", na.strings = c("NA", ""), header = TRUE)
   file_name <- x
-  file_name <- str_remove(file_name, "./data/")
+  file_name <- str_remove(file_name, "./data/raw/")
   file_name <- str_remove(file_name, ".txt")
   
   test <- janitor::remove_empty(test, which = "cols") #cols first to get rid of empty columns
@@ -85,10 +89,13 @@ clean_test <- function(x){
     print(nrow(cleaned_test))
     
     #write exercise data
-  write_csv(cleaned_test, file = paste0("./data/", file_name, ".csv"), eol="\r\n")
+  write_csv(cleaned_test, file = paste0("./data/processed/", file_name, ".csv"), eol="\r\n")
     #don't need to add more of the file path here because it's still in file_name from import
     
   
   
 }
 
+#Sample code for using clean_test function
+# txt_files <- list.files("./data/raw/", full.names = TRUE)
+# clean_test(txt_files[[1]])
