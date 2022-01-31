@@ -61,6 +61,26 @@ mar22_ids <- as.numeric(mar22_ids)
 #Fix speeds on all tests
 fixed_tests <- map(mar22_ids, fix_speeds_grades, vt_data = vts)
 
+
+#### Next Steps ####
+
+#First, write fixed_tests to CSVs, because that data is what other studies should use (fixed speeds, added stage numbers, etc.)
+
+#Should we also add mid 5 of 7 averaging here before filtering and storing in E and F below?
+
+# e.	Filter data off of the stage number to just the ramping data then store as df
+# f.	Filter data off of stage number to the 62.5% stage then store as df
+# g.	*MRT calculation*
+  #   i.	Upper limit of VT1
+  # ii.	Lower limit of 1 minute into the ramp
+  # iii.	Fit a regression line of VO2 vs. speed
+  # iv.	Plug in VO2 from SS and solve for speed
+  # v.	Find difference between actual SS speed and regression line SS speed from above
+  # vi.	Calculate the time difference for that speed difference using ramp rate
+
+
+
+
 #### Old Code for fixing a single test ####
 
 #Read in a sample test
