@@ -10,44 +10,7 @@ vts <- vts %>%
   mutate(rc = lubridate::hms(rc),
          rc = lubridate::hour(rc) + (lubridate::minute(rc)/60))
 
-#Read in a sample test
-test <- read_csv("data/processed/stages/mar22_105_pre.csv", show_col_types = FALSE)
-
-#Selects the row in vts that corresponds to the sample test
-mar22_105 <- vts[1,]
-
-#Create a new column with 2 mile speed
-  #Do we need this?
-# test$increment <- mar22_105$speed_2mi
-
-#Creates a vector with corrected speeds
-fixed_speeds <- case_when(test$stage == 1 ~ 3, #walking 
-          test$stage == 2 ~ round(mar22_105$speed_2mi*.75,1), #marathon pace
-          test$stage == 3 ~ round(mar22_105$speed_2mi*0.3,1), #recovery 1
-          test$stage == 4 ~ round(mar22_105$speed_2mi*0.635,1), #steady state for adjustment with MRT
-          test$stage == 5 ~ round(mar22_105$speed_2mi*0.45,1), #recovery 2
-          test$stage %in% c(6:37) ~ #between stage 6 and stage 37 is a gradual increase in speed
-            round((mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
-            mar22_105$speed_2mi*0.45, 1),
-          test$stage > 37 ~ round(mar22_105$speed_2mi, 1)#anything beyond stage 37 is always 2 mile speed
-          )
-
-#make sure speeds are right
-fixed_speeds
-
-#Creates a vector with corrected grades
-fixed_grades <- case_when(test$stage < 38 ~ 1, #most of the test is at 1%
-                          test$stage >= 38 ~ 1 + (test$stage - 37) * 0.5) #after stage 37 the incline increases
-#make sure grades are right
-fixed_grades
-
-#add fixed speeds and grades to the test
-test <- test %>% 
-  mutate(fixed_speeds = fixed_speeds,
-         fixed_grades = fixed_grades)
-
-
-#Now make this into a function
+#Now make a function to fix speeds and grades
   #supply an ID number for which test to find
   #vt_data should be a data frame with data by ID for each participant
   #Could eventually add arguments for year and pre/post, aren't needed right now
@@ -59,19 +22,18 @@ fix_speeds_grades <- function(id, vt_data){
   
   #match test data to VT data
   test_idx <- which(vt_data$id == id)
-  vt_data[test_idx,]
-  
+  id_vt_data <- vt_data[test_idx,] #subsets vt_data for just the ID of interest
   
   #Creates a vector with corrected speeds
   fixed_speeds <- case_when(test$stage == 1 ~ 3, #walking 
-                            test$stage == 2 ~ round(mar22_105$speed_2mi*.75,1), #marathon pace
-                            test$stage == 3 ~ round(mar22_105$speed_2mi*0.3,1), #recovery 1
-                            test$stage == 4 ~ round(mar22_105$speed_2mi*0.635,1), #steady state for adjustment with MRT
-                            test$stage == 5 ~ round(mar22_105$speed_2mi*0.45,1), #recovery 2
+                            test$stage == 2 ~ round(id_vt_data$speed_2mi*.75,1), #marathon pace
+                            test$stage == 3 ~ round(id_vt_data$speed_2mi*0.3,1), #recovery 1
+                            test$stage == 4 ~ round(id_vt_data$speed_2mi*0.635,1), #steady state for adjustment with MRT
+                            test$stage == 5 ~ round(id_vt_data$speed_2mi*0.45,1), #recovery 2
                             test$stage %in% c(6:37) ~ #between stage 6 and stage 37 is a gradual increase in speed
-                              round((mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
-                                      mar22_105$speed_2mi*0.45, 1),
-                            test$stage > 37 ~ round(mar22_105$speed_2mi, 1)#anything beyond stage 37 is always 2 mile speed
+                              round((id_vt_data$speed_2mi - id_vt_data$speed_2mi*0.45) / 32 * (test$stage - 5) +
+                                      id_vt_data$speed_2mi*0.45, 1),
+                            test$stage > 37 ~ round(id_vt_data$speed_2mi, 1)#anything beyond stage 37 is always 2 mile speed
   )
   
   #Creates a vector with corrected grades
@@ -90,6 +52,56 @@ fix_speeds_grades <- function(id, vt_data){
 
 #Confirm function works for one test
 fix_speeds_grades(105, vt_data = vts)
+
+#Make a vector of IDs from the tests in the stages folder
+mar22_ids <- str_remove(list.files(path = "./data/processed/stages/"), pattern = "_pre.csv")
+mar22_ids <- str_remove(mar22_ids, pattern = "mar22_")
+mar22_ids <- as.numeric(mar22_ids)
+
+#Fix speeds on all tests
+fixed_tests <- map(mar22_ids, fix_speeds_grades, vt_data = vts)
+
+#### Old Code for fixing a single test ####
+
+#Read in a sample test
+test <- read_csv("data/processed/stages/mar22_105_pre.csv", show_col_types = FALSE)
+
+#Selects the row in vts that corresponds to the sample test
+mar22_105 <- vts[1,]
+
+#Create a new column with 2 mile speed
+#Do we need this?
+# test$increment <- mar22_105$speed_2mi
+
+#Creates a vector with corrected speeds
+fixed_speeds <- case_when(test$stage == 1 ~ 3, #walking 
+                          test$stage == 2 ~ round(mar22_105$speed_2mi*.75,1), #marathon pace
+                          test$stage == 3 ~ round(mar22_105$speed_2mi*0.3,1), #recovery 1
+                          test$stage == 4 ~ round(mar22_105$speed_2mi*0.635,1), #steady state for adjustment with MRT
+                          test$stage == 5 ~ round(mar22_105$speed_2mi*0.45,1), #recovery 2
+                          test$stage %in% c(6:37) ~ #between stage 6 and stage 37 is a gradual increase in speed
+                            round((mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
+                                    mar22_105$speed_2mi*0.45, 1),
+                          test$stage > 37 ~ round(mar22_105$speed_2mi, 1)#anything beyond stage 37 is always 2 mile speed
+)
+
+#make sure speeds are right
+fixed_speeds
+
+#Creates a vector with corrected grades
+fixed_grades <- case_when(test$stage < 38 ~ 1, #most of the test is at 1%
+                          test$stage >= 38 ~ 1 + (test$stage - 37) * 0.5) #after stage 37 the incline increases
+#make sure grades are right
+fixed_grades
+
+#add fixed speeds and grades to the test
+test <- test %>% 
+  mutate(fixed_speeds = fixed_speeds,
+         fixed_grades = fixed_grades)
+
+
+
+
 
 # (mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
 #   mar22_105$speed_2mi*0.45
