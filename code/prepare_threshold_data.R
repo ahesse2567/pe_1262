@@ -60,20 +60,18 @@ fix_speeds_grades <- function(id, vt_data, time_point) {
   return(test)
 }
 
-
 #Confirm function works for one test
 fix_speeds_grades(105, vt_data = vts, time_point = "pre")
 
-# (mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
-#   mar22_105$speed_2mi*0.45
-# 
-# stages <- 1:61
-# 
-# numerator <- (mar22_105$speed_2mi - mar22_105$speed_2mi*0.45)
-# denominator <- num_stages
-# 
-# numerator / denominator
-# 
-# round(numerator / denominator * (stages - 5) + mar22_105$speed_2mi*0.45, 1)
-# 
-# round(stage15 + mar22_105$speed_2mi*0.45, 1)
+file_list <- list.files("data/processed/stages/", full.names = TRUE)
+
+for(f in file_list) {
+  test <- suppressMessages((read_csv(f)))
+  id <- str_extract(f, "\\d{3}")
+  test_fixed <- fix_speeds_grades(105, vt_data = vts, time_point = "pre")
+  f_name <- paste0("mar22_", id, "_pre.csv")
+  write_csv(test_fixed,
+            file = paste0("data/processed/fixed_speeds_grades/",f_name))
+}
+
+
