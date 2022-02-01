@@ -14,10 +14,13 @@ vts <- vts_raw %>%
   # supply an ID number for which test to find
   # vt_data should be a data frame with data by ID for each participant
   # Could eventually add arguments for year and pre/post, aren't needed right now
-fix_speeds_grades <- function(id, vt_data) {
+fix_speeds_grades <- function(id, vt_data, time_point) {
   # browser()
+  time_point = match.arg(time_point, choices = c("pre", "post"))
+  
   #read in test data
-  file_name <- paste0("data/processed/stages/mar22_", as.character(id), "_pre.csv")
+  file_name <- paste0("data/processed/stages/mar22_",
+                      as.character(id), "_", time_point, ".csv")
   test <- read_csv(file_name, show_col_types = FALSE)
   
   #match test data to VT data
@@ -59,7 +62,7 @@ fix_speeds_grades <- function(id, vt_data) {
 
 
 #Confirm function works for one test
-fix_speeds_grades(105, vt_data = vts)
+fix_speeds_grades(105, vt_data = vts, time_point = "pre")
 
 # (mar22_105$speed_2mi - mar22_105$speed_2mi*0.45) / 32 * (test$stage - 5) +
 #   mar22_105$speed_2mi*0.45
