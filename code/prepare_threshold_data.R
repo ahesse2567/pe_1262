@@ -23,7 +23,7 @@ fix_speeds_grades <- function(id, vt_data, time_point) {
                       as.character(id), "_", time_point, ".csv")
   test <- read_csv(file_name, show_col_types = FALSE)
   
-  #match test data to VT data
+  # match test data to VT data
   test_idx <- which(vt_data$id == id)
   
   #Creates a vector with corrected speeds
