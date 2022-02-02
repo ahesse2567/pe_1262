@@ -65,13 +65,14 @@ fix_speeds_grades(105, vt_data = vts, time_point = "pre")
 
 file_list <- list.files("data/processed/stages/", full.names = TRUE)
 
-for(f in file_list) {
-  test <- suppressMessages((read_csv(f)))
-  id <- str_extract(f, "\\d{3}")
-  test_fixed <- fix_speeds_grades(105, vt_data = vts, time_point = "pre")
-  f_name <- paste0("mar22_", id, "_pre.csv")
+for(i in 1:length(file_list)) {
+  f_name <- file_list[i]
+  test <- suppressMessages((read_csv(f_name)))
+  id <- str_extract(f_name, "\\d{3}")
+  test_fixed <- fix_speeds_grades(id, vt_data = vts, time_point = "pre")
+  f_name_out <- paste0("mar22_", id, "_pre.csv")
   write_csv(test_fixed,
-            file = paste0("data/processed/fixed_speeds_grades/",f_name))
+            file = paste0("data/processed/fixed_speeds_grades/",f_name_out))
 }
 
 
