@@ -1,5 +1,7 @@
 library(tidyverse)
 
+rm(list = ls())
+
 vts_raw <- read_csv("./data/threshold_data.csv", show_col_types = FALSE) %>% 
   drop_na() #some people ran the two mile but didn't complete an exercise test
 
@@ -9,6 +11,12 @@ vts <- vts_raw %>%
          at = lubridate::hour(at) + (lubridate::minute(at)/60)) %>% 
   mutate(rc = lubridate::hms(rc),
          rc = lubridate::hour(rc) + (lubridate::minute(rc)/60))
+
+get_mode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
 
 #Now make this into a function
   # supply an ID number for which test to find
@@ -56,12 +64,29 @@ fix_speeds_grades <- function(id, vt_data, time_point) {
     mutate(fixed_speeds = fixed_speeds,
            fixed_grades = fixed_grades)
   
+  rec2_speed <- test %>% 
+    filter(stage == 5) %>% 
+    select(fixed_speeds) %>% 
+    summarize(start_speed = get_mode(fixed_speeds)) %>% 
+    pull()
+  max_speed <- max(test$fixed_speeds)
+  ramp_rate <- (max_speed - rec2_speed) / 8 # ramp lasts 8 minutes
+  
+  min_ramp_time <- test %>% 
+    filter(stage >= 6) %>% 
+    select(ex_time) %>% 
+    min()
+  
+  test <- test %>% 
+    mutate(ramp_time = ex_time - min_ramp_time,
+           ramp_speed = ramp_rate * ramp_time + rec2_speed)
+  
   #return dataframe with corrected speeds and grades
   return(test)
 }
 
 #Confirm function works for one test
-fix_speeds_grades(105, vt_data = vts, time_point = "pre")
+fix_speeds_grades(105, vt_data = vts, time_point = "pre") %>% View
 
 file_list <- list.files("data/processed/stages/", full.names = TRUE)
 

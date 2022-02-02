@@ -43,7 +43,7 @@ for(i in 1:length(mrt_data)) {
   mrt_data[i] <- get_mrt(.data = test_list[[i]],
                           id = ids[i],
                           vt_data = vts,
-                          front_cutoff = 2)
+                          front_cutoff = 1)
 }
 
 mrt_data
