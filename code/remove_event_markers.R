@@ -1,22 +1,21 @@
-library(tidyverse); library(janitor)
+library(tidyverse); library(janitor); library(hms)
 
 #a helper function for clean_test
 tidy_test <- function(df, slim_cols=FALSE){
-  
+  # browser()
   df <- df %>%
     select(-contains("heart"), -contains("HR")) %>% #not needed, usually has bad data
     drop_na()
   
   df <- df %>%
-    select(-contains("clock")) %>% 
+    # select(-contains("clock")) %>% 
     separate(Time, into = c("M1", "S1"), sep = ":") %>%
     separate(Ex.Time, into = c("M2", "S2"), sep = ":") %>% 
-    # separate(Time..Clock., into = c("H3", "M3", "S3"), sep = ":") %>% 
-    # time.clock is just going to be deleted for now
+    separate(`Time..Clock.`, into = c("H3", "M3", "S3"), sep = ":") %>% 
     mutate(across(where(is.character), as.numeric)) %>%
     mutate(time = (M1 + (S1/60)), .keep = "unused") %>% 
-    mutate(ex_time = (M2 + (S2/60)), .keep = "unused")
-    # mutate(clock_time = (M3 + (S3/60)), .keep = "unused")
+    mutate(ex_time = (M2 + (S2/60)), .keep = "unused") %>% 
+    mutate(clock_time = hms(S3, M3, H3), .keep = "unused")
   
   vo2_cols <- grep(pattern = "VO2", x = colnames(df))
   
@@ -91,7 +90,7 @@ clean_test <- function(x){
     # print(nrow(cleaned_test))
     
     #write exercise data
-  write_csv(cleaned_test, file = paste0("./data/processed/", file_name, ".csv"), eol="\r\n")
+  write_csv(cleaned_test, file = paste0("./data/processed/no_events/", file_name, ".csv"), eol="\r\n")
     #don't need to add more of the file path here because it's still in file_name from import
     
   

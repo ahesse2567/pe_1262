@@ -1,7 +1,7 @@
 library(tidyverse)
 
 rm(list = ls())
-source("remove_event_markers.R")
+source("code/remove_event_markers.R")
 
 file_list <- list.files("data/raw", full.names = TRUE)
 file_list
