@@ -17,8 +17,18 @@ clock_time <- hms(clock_sec, clock_min, clock_hr)
 hr_data %>% 
   mutate(elapsed_time = cumsum(rr)/1000, 
          elapsed_time = hms(seconds = elapsed_time), 
-         clock_time = as_hms(clock_time + elapsed_time),
-         hr = 60/(rr/1000))
+         clock_time = as_hms(clock_time + elapsed_time), #convert from difftime to hms
+         clock_time = round(clock_time, 0), #round times to allow merging with gas exchange data
+         clock_time = as_hms(clock_time), #convert from difftime to hms
+         hr = 60/(rr/1000)) %>% 
+  select(-rr, -elapsed_time) %>% #not needed
+  group_by(clock_time) %>% #Heart beats can occur multiple times per second, but that's more frequent than data in Breeze
+  summarise(clock_time = mean(clock_time), hr = mean(hr)) %>% #Average data down to allow for merge with Breeze
+  mutate(clock_time = as_hms(clock_time)) #switch clock_time back into hms
+
+
+
+
   
 
 
