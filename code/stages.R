@@ -40,7 +40,7 @@ test_list_stages <- vector(mode = "list", length = length(test_list))
 
 for(i in 1:length(test_list_stages)) {
   test_list_stages[[i]] <- add_stages(test_list[[i]])
-  test_name <- str_replace(file_list[i], "data/processed//", "")
+  test_name <- str_replace(file_list[i], "data/processed/no_events/", "")
   write_csv(test_list_stages[[i]], file = paste0("data/processed/stages/",
                                                  test_name))
 }

@@ -1,6 +1,6 @@
 library(tidyverse)
 
-rm(list = ls())
+# rm(list = ls())
 
 vts_raw <- read_csv("./data/threshold_data.csv", show_col_types = FALSE) %>% 
   drop_na() #some people ran the two mile but didn't complete an exercise test
