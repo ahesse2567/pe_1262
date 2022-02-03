@@ -1,7 +1,5 @@
 library(tidyverse)
 
-rm(list = ls())
-
 add_stages <- function(.df, time_col = "ex_time") {
   # make stages first
   pre_ramp_stage_lengths <- c(60, 60*5, rep(60*3, 3))
