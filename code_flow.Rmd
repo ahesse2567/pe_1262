@@ -12,6 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Run code files in this order to reproduce our results
 
 1. txt_to_csv.R (uses remove_event_markers.R)
-2. correct_speed_grade.R
-3. stages.R
+2. stages.R
+3. correct_speed_grade.R
 4.

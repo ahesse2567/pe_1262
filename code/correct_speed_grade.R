@@ -86,7 +86,7 @@ fix_speeds_grades <- function(id, vt_data, time_point) {
 }
 
 #Confirm function works for one test
-fix_speeds_grades(105, vt_data = vts, time_point = "pre") %>% View
+# fix_speeds_grades(105, vt_data = vts, time_point = "pre") %>% View
 
 file_list <- list.files("data/processed/stages/", full.names = TRUE)
 
