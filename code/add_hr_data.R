@@ -52,12 +52,14 @@ yr <- str_extract(join_hrv_data$Date, "\\d{4}") #year
 mon <- str_extract(join_hrv_data$Date, "^\\d{1}") #month
 day <- str_extract(join_hrv_data$Date, "\\/\\d{1,2}") %>% str_remove(., "/") %>% as.numeric() #date
 
+#make sure months are all two digits
 for (i in 1:length(mon)){
   if (length(mon[i]) < 2){
     mon[i] <- paste0("0", mon[i])
   }
 }
 
+#make sure days are all two digits
 for (i in 1:length(day)){
   if (day[i] < 10){
     day[i] <- paste0("0", day[i])
@@ -73,6 +75,31 @@ hrv_time <- str_replace_all(join_hrv_data$`Exact start time`, ":", "-")
 join_hrv_data$hrv_date_time <- paste(hrv_date, hrv_time, sep = " ")
 
 hrv_files <- list.files("data/raw_hrv/")
+
+hrv_files <- str_remove(hrv_files, ".txt")
+
+for (i in 1:nrow(join_hrv_data)){
+  
+  #which of the HRV files matches the master spreadsheet
+  files_idx <- which(hrv_files == join_hrv_data[i,]$hrv_date_time)
+  
+  if (join_hrv_data[i,]$hrv_date_time == hrv_files[files_idx]){
+    
+    new_file_name <- paste0("data/labeled_hrv/", "mar22_", join_hrv_data$ID[i], "_", hrv_files[files_idx], ".txt")
+    old_file_name <- paste0("data/raw_hrv/", hrv_files[files_idx], ".txt")
+    
+    file.copy(from = old_file_name, to = new_file_name)
+    
+  }else{
+    
+    print("error")
+    print(i)
+  }
+
+  
+  
+}
+
 
 #Next steps:
 #Write a loop that matches each HRV file to the corresponding ID number, labels it, and writes it as a new file to labeled_hrv
