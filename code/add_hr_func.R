@@ -1,10 +1,11 @@
+library(tidyverse)
+
 bind_hr_data <- function(id, time_point) {
   id <- as.character(id)
   browser()
-  file_list_hrv <- list.files('data/hrv/')
-  
-  f_name_hrv <- file_list_hrv[str_which(paste0("./data/hrv/", id, ".txt"))]
-  hr_dat <- read_delim(file = f_name_hrv,
+  file_list_hrv <- list.files("data/labeled_hrv/", full.names = TRUE)
+  f_name_hrv <- file_list_hrv[str_which(file_list_hrv, id)]
+  hr_data <- read_delim(file = f_name_hrv,
                        delim = "/t",
                        col_names = FALSE,
                        show_col_types = FALSE) %>% 
@@ -33,14 +34,18 @@ bind_hr_data <- function(id, time_point) {
   test_list <- list.files("data/processed/fixed_speeds_grades/",
                           full.names = TRUE)
   id_tp <- paste0(id, "_", time_point)
-  test <- test_list[str_which(test_list, id_tp)]
+  test_name <- test_list[str_which(test_list, id_tp)]
+  
+  test <- read_csv(test_name)
   
   # Merges data frames and keeps all gas exchange data
-  merge(test, hr_data, by = "clock_time", all.x = TRUE) %>% 
-    as_tibble() %>% 
-    ggplot(data = .) + 
-    geom_point(aes(x = ex_time, y = hr/max(hr)), color = "red") +
-    geom_point(aes(x = ex_time, y = vo2/max(vo2)), color = "blue") +
-    geom_point(aes(x = ex_time, y = speed/max(speed)), color = "green")
+  merged_test <- merge(test, hr_data, by = "clock_time", all.x = TRUE) %>% 
+    as_tibble()
+
+  ggplot(data = merged_test, aes(x = ex_time, y = hr/max(hr)))+
+    geom_point()
+    geom_point(aes(x = ex_time, y = hr/max(hr)), color = "red")
+    # geom_point(aes(x = ex_time, y = vo2/max(vo2)), color = "blue") +
+    # geom_point(aes(x = ex_time, y = speed/max(speed)), color = "green")
   
 }
