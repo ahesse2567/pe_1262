@@ -40,12 +40,10 @@ bind_hr_data <- function(id, time_point) {
   
   # Merges data frames and keeps all gas exchange data
   merged_test <- merge(test, hr_data, by = "clock_time", all.x = TRUE) %>% 
-    as_tibble()
-
-  ggplot(data = merged_test, aes(x = ex_time, y = hr/max(hr)))+
-    geom_point()
-    geom_point(aes(x = ex_time, y = hr/max(hr)), color = "red")
-    # geom_point(aes(x = ex_time, y = vo2/max(vo2)), color = "blue") +
-    # geom_point(aes(x = ex_time, y = speed/max(speed)), color = "green")
+    as_tibble() %>% 
+    select(-elapsed_time)
   
+  f_name_out <- paste0("./data/processed/final/mar22_",
+                       id, "_", time_point, ".csv")
+  write_csv(merged_test, file = f_name_out)
 }
