@@ -3,13 +3,13 @@ library(gasExchangeR)
 
 rm(list = ls())
 
-file_list <- list.files("data/processed/fixed_speeds_grades/",
+file_list <- list.files("data/processed/final/",
                         full.names = TRUE)
 
 test_list_raw <- vector(mod = "list", length = length(file_list))
 
 for(i in 1:length(file_list)) {
-  test_list_raw[[i]] <- read_csv(file_list[i])
+  test_list_raw[[i]] <- read_csv(file_list[i], show_col_types = FALSE)
 }
 
 test_list <- vector(mod = "list", length = length(test_list_raw))
@@ -37,19 +37,19 @@ vts <- vts_raw %>%
 
 rer_vo2max <- numeric(length = length(test_list))
 vo2max <- numeric(length = length(test_list))
-# hr_vo2max <- numeric(length = length(test_list))
-# max_hr <- numeric(length = length(test_list))
+hr_vo2max <- numeric(length = length(test_list))
+max_hr <- numeric(length = length(test_list))
 
 speed_at <- numeric(length = length(test_list))
 rer_at <- numeric(length = length(test_list))
 vo2_at <- numeric(length = length(test_list))
 pct_vo2_at <- numeric(length = length(test_list))
-# hr_at <- numeric(length = length(test_list))
+hr_at <- numeric(length = length(test_list))
 
 rer_rc <- numeric(length = length(test_list))
 vo2_rc <- numeric(length = length(test_list))
 pct_vo2_rc <- numeric(length = length(test_list))
-# hr_rc <- numeric(length = length(test_list))
+hr_rc <- numeric(length = length(test_list))
 
 i <- 1
 
@@ -61,8 +61,8 @@ for(i in 1:length(test_list)) {
   vo2max_idx <- which.max(test_list[[i]][["vo2"]])
   
   rer_vo2max[i] <- test_list[[i]][["rer"]][vo2max_idx]
-  # hr_vo2maxp[i] <- 
-  # max_hr[i] <- 
+  hr_vo2max[i] <- test_list[[i]][["hr"]][vo2max_idx]
+  max_hr[i] <- max(test_list[[i]][["hr"]])
   
   at_mrt <- (vts[i,"at"] - mrt_data[i,"mrt"]) %>% 
     pull()
@@ -72,13 +72,13 @@ for(i in 1:length(test_list)) {
   rer_at[i] <- round(test_list[[i]][["rer"]][at_idx],2)
   vo2_at[i] <- round(test_list[[i]][["vo2"]][at_idx],1)
   pct_vo2_at[i] <- round(vo2_at[i] / vo2max[i] * 100, 1)
-  # hr_at[i] <- 
+  hr_at[i] <- test_list[[i]][["hr"]][at_idx]
   
   rc_idx <- which.min(abs(test_list[[i]][["ex_time"]] - vts[["rc"]][i]))
   rer_rc[i] <- round(test_list[[i]][["rer"]][rc_idx],2)
   vo2_rc[i] <- round(test_list[[i]][["vo2"]][rc_idx],1)
   pct_vo2_rc[i] <- round(vo2_rc[i] / vo2max[i] * 100, 1)
-  # hr_rc[i] <- 
+  hr_rc[i] <- test_list[[i]][["hr"]][rc_idx]
 }
 
 pre_report <- bind_cols(vts,
