@@ -22,6 +22,8 @@ test_list <- map(test_list_raw, avg_exercise_test,
                  trim = 2)
 
 mrt_data <- read_csv("data/processed/mrt.csv")
+mrt_data <- mrt_data %>% 
+  mutate(mrt = case_when(mrt < 0 ~ 0, mrt >= 0 ~ mrt))
 
 
 vts_raw <- read_csv("./data/threshold_data.csv", show_col_types = FALSE) %>% 
@@ -51,18 +53,12 @@ vo2_rc <- numeric(length = length(test_list))
 pct_vo2_rc <- numeric(length = length(test_list))
 hr_rc <- numeric(length = length(test_list))
 
-i <- 1
-
-ggplot(data = test_list[[i]], aes(x = ex_time, y = vo2)) +
-  geom_point()
 
 for(i in 1:length(test_list)) {
   vo2max[i] <- round(max(test_list[[i]][["vo2"]]),1)
   vo2max_idx <- which.max(test_list[[i]][["vo2"]])
   
   rer_vo2max[i] <- test_list[[i]][["rer"]][vo2max_idx]
-  hr_vo2max[i] <- test_list[[i]][["hr"]][vo2max_idx]
-  max_hr[i] <- max(test_list[[i]][["hr"]])
   
   at_mrt <- (vts[i,"at"] - mrt_data[i,"mrt"]) %>% 
     pull()
@@ -72,24 +68,38 @@ for(i in 1:length(test_list)) {
   rer_at[i] <- round(test_list[[i]][["rer"]][at_idx],2)
   vo2_at[i] <- round(test_list[[i]][["vo2"]][at_idx],1)
   pct_vo2_at[i] <- round(vo2_at[i] / vo2max[i] * 100, 1)
-  hr_at[i] <- test_list[[i]][["hr"]][at_idx]
   
   rc_idx <- which.min(abs(test_list[[i]][["ex_time"]] - vts[["rc"]][i]))
   rer_rc[i] <- round(test_list[[i]][["rer"]][rc_idx],2)
   vo2_rc[i] <- round(test_list[[i]][["vo2"]][rc_idx],1)
   pct_vo2_rc[i] <- round(vo2_rc[i] / vo2max[i] * 100, 1)
-  hr_rc[i] <- test_list[[i]][["hr"]][rc_idx]
+  
+  if(any(str_detect(colnames(test_list[[i]]), "hr"))) {
+    hr_vo2max[i] <- test_list[[i]][["hr"]][vo2max_idx]
+    max_hr[i] <- max(test_list[[i]][["hr"]])
+    hr_at[i] <- test_list[[i]][["hr"]][at_idx]
+    hr_rc[i] <- test_list[[i]][["hr"]][rc_idx]
+  } else {
+    hr_vo2max[i] <- NA
+    max_hr[i] <- NA
+    hr_at[i] <- NA
+    hr_rc[i] <- NA
+  }
+  
 }
 
-pre_report <- bind_cols(vts,
+pre_report <- bind_cols(round(vts,1),
           vo2max = vo2max,
           rer_vo2max = rer_vo2max,
+          hr_vo2max = hr_vo2max,
           speed_at = speed_at,
           rer_at = rer_at,
           vo2_at = vo2_at,
           pct_vo2_at = pct_vo2_at,
+          hr_at = hr_at,
           rer_rc = rer_rc,
           vo2_rc = vo2_rc,
-          pct_vo2_rc = pct_vo2_rc)
+          pct_vo2_rc = pct_vo2_rc,
+          hr_rc = hr_rc)
 
 write_csv(pre_report, file = "data/processed/pre_report.csv")
