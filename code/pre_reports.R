@@ -75,10 +75,10 @@ for(i in 1:length(test_list)) {
   pct_vo2_rc[i] <- round(vo2_rc[i] / vo2max[i] * 100, 1)
   
   if(any(str_detect(colnames(test_list[[i]]), "hr"))) {
-    hr_vo2max[i] <- test_list[[i]][["hr"]][vo2max_idx]
-    max_hr[i] <- max(test_list[[i]][["hr"]])
-    hr_at[i] <- test_list[[i]][["hr"]][at_idx]
-    hr_rc[i] <- test_list[[i]][["hr"]][rc_idx]
+    hr_vo2max[i] <- round(test_list[[i]][["hr"]][vo2max_idx],0)
+    max_hr[i] <- round(max(test_list[[i]][["hr"]]),0)
+    hr_at[i] <- round(test_list[[i]][["hr"]][at_idx],0)
+    hr_rc[i] <- round(test_list[[i]][["hr"]][rc_idx],0)
   } else {
     hr_vo2max[i] <- NA
     max_hr[i] <- NA
@@ -102,4 +102,5 @@ pre_report <- bind_cols(round(vts,1),
           pct_vo2_rc = pct_vo2_rc,
           hr_rc = hr_rc)
 
-write_csv(pre_report, file = "data/processed/pre_report.csv")
+write.csv(pre_report, file = "data/processed/pre_report.csv",
+          na = "", row.names = FALSE)

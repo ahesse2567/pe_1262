@@ -15,8 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 2. stages.R
 3. correct_speed_grade.R
 4. label_hrv_with_id.R
-
-
-
-4. add_hr_data.R
-4. mrt_calc.R (uses get_mrt.R)
+5. add_hr_data.R
+6. mrt_calc.R (uses get_mrt.R)
+7. pre_report.R
+8. pre_report_formatted.R
