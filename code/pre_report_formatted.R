@@ -5,8 +5,38 @@ pre_report <- read_csv("data/processed/pre_report_manual.csv") %>%
 
 long <- pre_report %>% 
   select(-c(time_2mi, speed_2mi, speed_2mi_ss, at, rc)) %>% 
+  rename(vo2_vo2max = vo2max,
+         pctvo2_at = pct_vo2_at,
+         pctvo2_rc = pct_vo2_rc) %>% 
   pivot_longer(cols = contains(c("at", "rc", "vo2"))) %>% 
-  group_split(id)
+  separate(name, into = c("var", "intensity"), sep = "_") %>% 
+  group_split(id) 
+
+
+store_data <- vector(mode = "list", length = length(long))
+
+for (i in length(long)){
+  
+  id <- unique(long[[i]]$id)
+  
+  temp_obj <- long[[i]] %>% 
+    pivot_wider(id_cols = var, names_from = intensity, values_from = value) %>% 
+    # rownames_to_column() %>%
+    mutate(across(everything(), as.character)) %>% 
+    t()
+    
+  colnames(temp_obj) <- temp_obj[1,]
+  
+  temp_obj <- as_tibble(temp_obj[-1,]) 
+  
+  temp_obj <- temp_obj %>% 
+    mutate(across(everything(), as.numeric)) %>% 
+    mutate(id = id) %>% 
+    relocate(id) %>% 
+    rename(`% VO2max` = pctvo2)
+
+  store_data[[i]] <- temp_obj
+}
 
 
 pre_report %>% 
