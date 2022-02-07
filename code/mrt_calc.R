@@ -14,7 +14,7 @@ file_list <- list.files("data/processed/fixed_speeds_grades/",
 test_list_raw <- vector(mod = "list", length = length(file_list))
 
 for(i in 1:length(file_list)) {
-  test_list_raw[[i]] <- read_csv(file_list[i])
+  test_list_raw[[i]] <- read_csv(file_list[i], show_col_types = FALSE)
 }
 
 test_list <- vector(mod = "list", length = length(test_list_raw))
@@ -43,7 +43,7 @@ for(i in 1:length(mrt_data)) {
   mrt_data[i] <- get_mrt(.data = test_list[[i]],
                           id = ids[i],
                           vt_data = vts,
-                          front_cutoff = 1)
+                          front_cutoff = 1) # cutoff the first min of data
 }
 
 mrt_data

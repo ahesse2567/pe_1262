@@ -2,7 +2,7 @@ library(tidyverse)
 
 bind_hr_data <- function(id, time_point) {
   id <- as.character(id)
-  browser()
+  # browser()
   file_list_hrv <- list.files("data/labeled_hrv/", full.names = TRUE)
   f_name_hrv <- file_list_hrv[str_which(file_list_hrv, id)]
   hr_data <- read_delim(file = f_name_hrv,
