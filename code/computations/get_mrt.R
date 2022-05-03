@@ -13,7 +13,8 @@ get_mrt <- function(.data,
                     id,
                     vt_data,
                     vt1_col = "at",
-                    front_cutoff = 1) {
+                    front_cutoff = 1,
+                    neg_mrt = 0.5) {
   
   rec2_speed <- .data %>% 
     filter(stage == 5) %>% 
@@ -44,6 +45,10 @@ get_mrt <- function(.data,
     filter(ex_time >= (min_ramp_time + front_cutoff) & 
              ex_time < vt_data[vt_data_test_idx,][[vt1_col]])
   
+  if(dim(mrt_ramp_section)[1] == 0) {
+    return(NA)
+  }
+  
   mod <- lm(vo2 ~ ramp_speed + 1, data = mrt_ramp_section)
   
   mrt_speed <- .data %>% 
@@ -56,6 +61,9 @@ get_mrt <- function(.data,
   speed_diff <- ramp_speed_mrt_vo2 - mrt_speed
   
   mrt <- (speed_diff / ramp_rate)
+  if(mrt < 0) {
+    mrt <- 0.5
+  }
   
   mrt
 }
