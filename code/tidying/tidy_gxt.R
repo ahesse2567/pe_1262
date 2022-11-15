@@ -2,6 +2,7 @@ library(tidyverse)
 library(stringr)
 
 tidy_gxt_rows <- function(.df) {
+  # find event markers and remove them, if present
   start_ex_idx <- which(.df == "Start Exercise", arr.ind = TRUE)
   at_idx <- which(.df == "AT", arr.ind = TRUE)
   rc_idx <- which(.df == "RC", arr.ind = TRUE)
@@ -14,6 +15,7 @@ tidy_gxt_rows <- function(.df) {
     start_row <- 1
   }
   
+  # remove recovery data, if recovery event marker is present
   if (length(rec_idx) == 0) {
     end_row <- nrow(.df)
   } else {
@@ -22,16 +24,18 @@ tidy_gxt_rows <- function(.df) {
   
   .df <- .df[start_row:end_row,]
   
+  # assemble ventilatory rows indicies
   ventilatory_events <- rbind(at_idx, rc_idx, vo2max_idx) %>% 
     as_tibble() %>% 
     select(row) %>% 
     pull()
   
+  # remove ventilatory rows
   if(length(ventilatory_events) > 0) {
     .df <- .df[-ventilatory_events,]
   }
   
-  .df
+  .df # return tidied data frame
 }
 
 

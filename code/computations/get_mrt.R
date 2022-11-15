@@ -3,6 +3,7 @@ library(gasExchangeR)
 
 # does this work best as 2 functions? 1 calcultes the mrt and the other
 # calculates a time adjusted value?
+# currently, this function only works with our very specific protocol
 
 get_mode <- function(v) {
   uniqv <- unique(v)
