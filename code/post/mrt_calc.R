@@ -8,8 +8,15 @@ rm(list = ls())
 
 source("code/computations/get_mrt.R")
 
-file_list <- list.files("data/post/processed/cpet_csv/",
-                        full.names = TRUE)
+cpet_hr_files <- list.files("data/2022/post/processed/cpet_hr/", full.names = TRUE)
+cpet_no_hr_files <- list.files("data/2022/post/processed/cpet_csv/", full.names = TRUE)
+
+# due to some HR data collection issues, not all CPETs had HR data.
+# This isolates those tests.
+cpet_only_files <-
+  cpet_no_hr_files[!(basename(cpet_no_hr_files) %in% basename(cpet_hr_files))]
+
+file_list <- c(cpet_hr_files,cpet_only_files) # combine file lists together
 
 test_list_raw <- vector(mod = "list", length = length(file_list))
 
@@ -26,7 +33,7 @@ test_list <- map(test_list_raw, avg_exercise_test,
     roll_window = 7,
     roll_trim = 2)
 
-vts_raw <- read_csv("data/post/raw/threshold_data.csv",
+vts_raw <- read_csv("data/2022/post/raw/threshold_data.csv",
                     show_col_types = FALSE)
 
 # cleans up the times in the spreadsheet with AT and RC data
@@ -53,8 +60,8 @@ mrt_data
 
 ids = str_extract(file_list, "mar\\d{2}_\\d{3}")
 
-mrt_tib <- tibble(id = ids, time_point = "post", mrt = mrt_data)
-mrt_tib
+mrt_tib <- tibble(id = ids, time_point = "post", mrt = mrt_data) %>% 
+  arrange(id)
 
-write_csv(mrt_tib, "data/post/processed/mrt.csv")
+write_csv(mrt_tib, "data/2022/post/processed/mrt.csv")
 
