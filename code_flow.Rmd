@@ -9,13 +9,22 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Run code files in this order to reproduce our results
+## Run code files in this order to reproduce our PRE results
 
-1. txt_to_csv.R (uses remove_event_markers.R)
-2. stages.R
-3. correct_speed_grade.R
-4. label_hrv_with_id.R
-5. add_hr_data.R
-6. mrt_calc.R (uses get_mrt.R)
-7. pre_report.R
-8. pre_report_formatted.R
+1.  txt_to_csv.R (uses remove_event_markers.R)
+2.  stages.R
+3.  correct_speed_grade.R
+4.  label_hrv_with_id.R
+5.  add_hr_data.R
+6.  mrt_calc.R (uses get_mrt.R)
+7.  pre_report.R
+8.  pre_report_formatted.R
+
+## Run code files in this order to reproduce POST results
+
+1.  tidy_tests.R (uses tidy_gxt.R, add_stages.R, correct_speed_grade.R)
+2.  label_hrv_with_id.R (matches actual testing order with HRV files and creates labeled files)
+3.  add_hr_data.R (uses add_hr_func.R)
+4.  mrt_calc.R (uses get_mrt.R)
+5.  post_report.R
+6.  post_report_formatted.R
