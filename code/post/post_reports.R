@@ -3,13 +3,23 @@ library(gasExchangeR)
 
 rm(list = ls())
 
-file_list <- list.files("data/post/processed/cpet_csv/",
+# there's currently a problem with #15 (id 144)
+
+cpet_hr_files <- list.files("data/2022/post/processed/cpet_hr/", full.names = TRUE)
+
+cpet_only_files <- list.files("data/2022/post/processed/cpet_csv/",
                         full.names = TRUE)
+cpet_no_hr_files <-
+  cpet_only_files[!basename(cpet_only_files) %in% basename(cpet_hr_files)]
+
+file_list <- c(cpet_hr_files, cpet_no_hr_files)
 
 test_list_raw <- vector(mod = "list", length = length(file_list))
 
 for(i in 1:length(file_list)) {
   test_list_raw[[i]] <- read_csv(file_list[i], show_col_types = FALSE)
+  names(test_list_raw)[i] <- basename(file_list[i]) %>% 
+    tools::file_path_sans_ext()
 }
 
 test_list <- vector(mod = "list", length = length(test_list_raw))
@@ -21,9 +31,9 @@ test_list <- map(test_list_raw, avg_exercise_test,
                  roll_window = 7,
                  roll_trim = 2)
 
-mrt_data <- read_csv("data/post/processed/mrt.csv", show_col_types = FALSE)
+mrt_data <- read_csv("data/2022/post/processed/mrt.csv", show_col_types = FALSE)
 
-vts_raw <- read_csv("data/post/raw/threshold_data.csv",
+vts_raw <- read_csv("data/2022/post/raw/threshold_data.csv",
                     show_col_types = FALSE)
 
 # cleans up the times in the spreadsheet with AT and RC data
@@ -52,7 +62,7 @@ hr_rc <- numeric(length = length(test_list))
 
 
 for(i in 1:length(test_list)) {
-  vo2max[i] <- round(max(test_list[[i]][["vo2"]]),1)
+  vo2max[i] <- round(max(test_list[[i]][["vo2"]]), 1)
   vo2max_idx <- which.max(test_list[[i]][["vo2"]])
   
   rer_vo2max[i] <- test_list[[i]][["rer"]][vo2max_idx]
@@ -87,7 +97,7 @@ for(i in 1:length(test_list)) {
   
   if(any(str_detect(colnames(test_list[[i]]), "hr"))) {
     hr_vo2max[i] <- round(test_list[[i]][["hr"]][vo2max_idx],0)
-    max_hr[i] <- round(max(test_list[[i]][["hr"]]),0)
+    max_hr[i] <- round(max(test_list[[i]][["hr"]], na.rm = TRUE), 0)
     hr_at[i] <- round(test_list[[i]][["hr"]][at_idx],0)
     hr_rc[i] <- round(test_list[[i]][["hr"]][rc_idx],0)
   } else {
@@ -99,20 +109,23 @@ for(i in 1:length(test_list)) {
   
 }
 
-post_report <- bind_cols(vts,
-          vo2max = vo2max,
-          rer_vo2max = rer_vo2max,
-          hr_vo2max = hr_vo2max,
-          speed_at = speed_at,
-          rer_at = rer_at,
-          vo2_at = vo2_at,
-          pct_vo2_at = pct_vo2_at,
-          hr_at = hr_at,
-          rer_rc = rer_rc,
-          vo2_rc = vo2_rc,
-          pct_vo2_rc = pct_vo2_rc,
-          hr_rc = hr_rc) %>% 
-  select(-contains(c("retest", "hr")))
+post_report <- bind_cols(
+  vts,
+  hrmax = max_hr,
+  vo2max = vo2max,
+  rer_vo2max = rer_vo2max,
+  hr_vo2max = hr_vo2max,
+  speed_at = speed_at,
+  rer_at = rer_at,
+  vo2_at = vo2_at,
+  pct_vo2_at = pct_vo2_at,
+  hr_at = hr_at,
+  rer_rc = rer_rc,
+  vo2_rc = vo2_rc,
+  pct_vo2_rc = pct_vo2_rc,
+  hr_rc = hr_rc
+) %>%
+  select(-contains(c("retest")))
 
 write.csv(post_report, file = "data/post/processed/post_report.csv",
           na = "", row.names = FALSE)
