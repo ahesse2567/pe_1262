@@ -1,11 +1,11 @@
 library(tidyverse)
 library(glue)
 library(hms)
-source("code/tidying/check_create_folder.R") # should this go in add_hr_data.R?
+
 
 bind_hr_data <- function(id, year, time_point) {
   id <- as.character(id)
-  browser()
+  # browser()
   hrv_folder = glue("data/{year}/{time_point}/processed/hrv")
   file_list_hrv <- list.files(hrv_folder, full.names = TRUE)
   f_name_hrv <- file_list_hrv[str_which(file_list_hrv, id)]
@@ -34,7 +34,7 @@ bind_hr_data <- function(id, year, time_point) {
     summarise(clock_time = mean(clock_time), hr = mean(hr), elapsed_time = mean(elapsed_time)) %>% #Average data down to allow for merge with Breeze
     mutate(clock_time = as_hms(clock_time)) #switch clock_time back into hms
   
-  check_create_folder(year = year, time_point = time_point, data_type = "cpet_hr")
+  
   
   cpet_folder <- glue("data/{year}/{time_point}/processed/cpet_csv")
   test_list <- list.files(cpet_folder, full.names = TRUE)
