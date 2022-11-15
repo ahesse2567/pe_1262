@@ -1,7 +1,7 @@
 library(tidyverse)
 library(glue)
 library(hms)
-source("code/tidying/check_create_folder.R")
+source("code/tidying/check_create_folder.R") # should this go in add_hr_data.R?
 
 bind_hr_data <- function(id, year, time_point) {
   id <- as.character(id)

@@ -7,7 +7,8 @@ source("code/tidying/check_create_folder.R")
 
 # TODO get testing order file
 
-join_hrv_data <- read_csv("data/2022/post/sp2022_marathon_post_testing_order.csv", show_col_types = FALSE) %>% 
+join_hrv_data <- read_csv("data/2022/post/sp2022_marathon_post_testing_order.csv",
+                          show_col_types = FALSE) %>% 
   clean_names() %>% 
   filter(is.na(retest)) %>% 
   select(-comments, -retest) %>% 
