@@ -2,8 +2,7 @@ library(tidyverse)
 
 rm(list = ls())
 
-post_report <- read_csv("data/post/processed/post_report.csv") %>% 
-  select(-1)
+post_report <- read_csv("data/2022/post/processed/post_report.csv")
 
 long <- post_report %>% 
   select(-c(time_2mi, speed_2mi, speed_2mi_ss, at_time, rc_time)) %>% 
@@ -42,7 +41,9 @@ for (i in 1:length(long)){
 }
 
 
-bind_rows(store_data) %>% 
-  write_csv(., file = "data/post/processed/mar22_post-report_formatted.csv")
+out <- bind_rows(store_data) %>% 
+  janitor::clean_names()
+
+write_csv(out, file = "data/post/processed/mar22_post-report_formatted.csv")
 
 

@@ -127,5 +127,5 @@ post_report <- bind_cols(
 ) %>%
   select(-contains(c("retest")))
 
-write.csv(post_report, file = "data/post/processed/post_report.csv",
+write.csv(post_report, file = "data/2022/post/processed/post_report.csv",
           na = "", row.names = FALSE)
