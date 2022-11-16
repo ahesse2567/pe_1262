@@ -1,0 +1,19 @@
+---
+title: "Code flow"
+author: "Anton Hesse"
+date: "2/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Run code files in this order to reproduce POST results
+
+1.  tidy_tests.R (uses tidy_gxt.R, add_stages.R, correct_speed_grade.R)
+2.  label_hrv_with_id.R (matches actual testing order with HRV files and creates labeled files)
+3.  add_hr_data.R (uses add_hr_func.R)
+4.  mrt_calc.R (uses get_mrt.R)
+5.  post_report.R
+6.  post_report_formatted.R
