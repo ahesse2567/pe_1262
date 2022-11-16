@@ -1,16 +1,16 @@
 Name,ID,Date,HRV start time,Exact HRV start time,Retest?,Comments
 "Fortoso, Oscar",130,4/21/2022,7:35,7:50:45,,
 "Martin, Isaac",187,4/21/2022,8:25,8:25:24,,
-"Phillips, Jake",196,4/21/2022,9:50,,,
-"Heilman, Jillian",193,4/21/2022,10:35,,,
+"Phillips, Jake",196,4/21/2022,9:50,10:02:03,,
+"Heilman, Jillian",193,4/21/2022,10:35,10:54:37,,
 "Armando, Thull",109,4/21/2022,11:25,11:23:45,,
 "Howerth, Amy",139,4/21/2022,12:15,12:13:25,,
-"Rowe, Madeline",120,4/21/2022,12:45,12:46:08,,
+"Rowe, Madeline",120,4/21/2022,12:45,,,"I think the HR file is off here. I previously said it was 12:45:08, but the HR changes don't line up with the speed/grade changes."
 "Willis, Emily",162,4/21/2022,13:30,13:26:02,,
 "Wunschel, Kylee",153,4/21/2022,14:14,14:13:39,,
-"Sullivan, Elizabeth",144,4/21/2022,16:06,16:05:35,,
-"Tanner, Caroline",142,4/21/2022,16:13,16:13:26,,
-"Stremcha, John",166,4/21/2022,16:45,,,
+"Sullivan, Elizabeth",144,4/21/2022,16:06,15:05:20,,"Double check this one. I think the HRV file might be for 15:05:20, not 16:05:35. The corresponding CPET starts at 15:17:08, which would make a lot more sense. 144 was also scheduled to arrive at 14:45, so 15:05 would make more sense for that reason, too"
+"Tanner, Caroline",142,4/21/2022,16:13,16:13:26,,Did Caroline have two files? 16-05-35 and 16-13-26 are very close to one another...
+"Stremcha, John",166,4/21/2022,16:45,16:18:06,,Could this be the 16:18:06 file?
 "Peterson, Rachel",185,4/21/2022,17:30,17:18:16,,
 "Lillig, Drew",181,4/22/2022,12:40,12:39:28,,
 "Wolf, Alix",140,4/22/2022,14:15,14:16:22,,
