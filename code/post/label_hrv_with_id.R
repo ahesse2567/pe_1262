@@ -1,6 +1,7 @@
 ##### UPDATE FOR POST DATA ####
 
 library(tidyverse); library(hms); library(janitor)
+rm(list = ls())
 source("code/tidying/check_create_folder.R")
 
 # First, associate an ID number with each HRV file
