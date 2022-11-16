@@ -44,7 +44,7 @@ tidy_gxt_cols <- function(.df,
                          slim_cols = FALSE) {
   # clean col names first and get rid of pre-exercise time
   .df <- .df %>%
-    clean_names() %>%
+    janitor::clean_names() %>%
     filter(!is.na(ex_time))
   
   # remove heart rate columns since we often import those later from RR intervals
