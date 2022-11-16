@@ -5,7 +5,7 @@ Name,ID,Date,HRV start time,Exact HRV start time,Retest?,Comments
 "Heilman, Jillian",193,4/21/2022,10:35,10:54:37,,
 "Armando, Thull",109,4/21/2022,11:25,11:23:45,,
 "Howerth, Amy",139,4/21/2022,12:15,12:13:25,,
-"Rowe, Madeline",120,4/21/2022,12:45,,,"I think the HR file is off here. I previously said it was 12:45:08, but the HR changes don't line up with the speed/grade changes."
+"Rowe, Madeline",120,4/21/2022,12:45,,,"I think the HR file is off here. I previously said it was 12:46:08, but the HR changes don't line up with the speed/grade changes."
 "Willis, Emily",162,4/21/2022,13:30,13:26:02,,
 "Wunschel, Kylee",153,4/21/2022,14:14,14:13:39,,
 "Sullivan, Elizabeth",144,4/21/2022,16:06,15:05:20,,"Double check this one. I think the HRV file might be for 15:05:20, not 16:05:35. The corresponding CPET starts at 15:17:08, which would make a lot more sense. 144 was also scheduled to arrive at 14:45, so 15:05 would make more sense for that reason, too"
@@ -43,7 +43,7 @@ Name,ID,Date,HRV start time,Exact HRV start time,Retest?,Comments
 "Hsiao, Chi-Wei",117,4/27/2022,8:54,8:53:23,TRUE,
 "Olson, Lexi",197,4/27/2022,9:27,9:26:58,TRUE,
 "Prine, Gerric",105,4/27/2022,10:28,,TRUE,
-"Shahar, Tsameret",131,4/27/2022,10:29,,,
+"Shahar, Tsameret",131,4/27/2022,10:29,10:29:53,,
 "Mishler, Sam",156,4/27/2022,10:49,10:49:18,,
 "Bohn, Ryan",145,4/27/2022,12:45,12:43:59,,
 "Ruiter, Bretton",129,4/27/2022,13:21,13:20:31,TRUE,
