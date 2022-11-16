@@ -11,7 +11,7 @@ source("code/tidying/correct_speed_grade.R")
 file_list <- list.files("data/2022/post/raw/cpet", full.names = TRUE)
 
 ids <- str_extract(file_list, "mar\\d{2}_\\d{3}")
-new_names <- paste0("data/post/processed/cpet_csv/", ids, "_post.csv")
+new_names <- paste0("data/2022/post/processed/cpet_csv/", ids, "_post.csv")
 
 vts_raw <- read_csv("data/2022/post/raw/threshold_data.csv", show_col_types = FALSE)
 
