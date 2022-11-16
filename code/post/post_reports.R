@@ -18,7 +18,7 @@ test_list_raw <- vector(mod = "list", length = length(file_list))
 
 for(i in 1:length(file_list)) {
   test_list_raw[[i]] <- read_csv(file_list[i], show_col_types = FALSE)
-  names(test_list_raw)[i] <- basename(file_list[i]) %>% 
+  names(test_list_raw)[i] <- basename(file_list[i]) %>%
     tools::file_path_sans_ext()
 }
 
@@ -41,9 +41,9 @@ vts <- vts_raw %>%
   mutate(at_time = lubridate::hms(at_time),
          at_time = lubridate::hour(at_time) + (lubridate::minute(at_time)/60)) %>% 
   mutate(rc_time = lubridate::hms(rc_time),
-         rc_time = lubridate::hour(rc_time) + (lubridate::minute(rc_time)/60)) %>% 
-  filter(!is.na(at_time))
+         rc_time = lubridate::hour(rc_time) + (lubridate::minute(rc_time)/60))
 
+id <- character(length= length(test_list))
 rer_vo2max <- numeric(length = length(test_list))
 vo2max <- numeric(length = length(test_list))
 hr_vo2max <- numeric(length = length(test_list))
@@ -60,8 +60,8 @@ vo2_rc <- numeric(length = length(test_list))
 pct_vo2_rc <- numeric(length = length(test_list))
 hr_rc <- numeric(length = length(test_list))
 
-
 for(i in 1:length(test_list)) {
+  id[i] <- names(test_list)[i] %>% str_remove("_post")
   vo2max[i] <- round(max(test_list[[i]][["vo2"]]), 1)
   vo2max_idx <- which.max(test_list[[i]][["vo2"]])
   
@@ -70,11 +70,12 @@ for(i in 1:length(test_list)) {
   at_mrt <- (vts[i,"at_time"] - mrt_data[i,"mrt"]) %>% 
     pull()
   
+  # variables at VT1
   if(is.na(at_mrt)) {
     speed_at[i] <- NA
     rer_at[i] <- NA
     vo2_at[i] <- NA
-    pct_vo2_at <- NA
+    pct_vo2_at[i] <- NA
   } else {
     at_mrt_idx <- which.min(abs(test_list[[i]][["ex_time"]] - at_mrt))
     speed_at[i] <- round(test_list[[i]][["ramp_speed"]][at_mrt_idx],1)
@@ -84,10 +85,11 @@ for(i in 1:length(test_list)) {
     pct_vo2_at[i] <- round(vo2_at[i] / vo2max[i] * 100, 1)
   }
   
+  # variables at RC/VT2
   if(length(which.min(abs(test_list[[i]][["ex_time"]] - vts[["rc_time"]][i]))) == 0) {
     rer_rc[i] <- NA
     vo2_rc[i] <- NA
-    pct_vo2_rc <- NA
+    pct_vo2_rc[i] <- NA
   } else {
     rc_idx <- which.min(abs(test_list[[i]][["ex_time"]] - vts[["rc_time"]][i]))
     rer_rc[i] <- round(test_list[[i]][["rer"]][rc_idx],2)
@@ -106,11 +108,10 @@ for(i in 1:length(test_list)) {
     hr_at[i] <- NA
     hr_rc[i] <- NA
   }
-  
 }
 
-post_report <- bind_cols(
-  vts,
+gxt_vals <- bind_cols(
+  id = id,
   hrmax = max_hr,
   vo2max = vo2max,
   rer_vo2max = rer_vo2max,
@@ -124,8 +125,12 @@ post_report <- bind_cols(
   vo2_rc = vo2_rc,
   pct_vo2_rc = pct_vo2_rc,
   hr_rc = hr_rc
-) %>%
+)
+
+post_report <- full_join(vts, gxt_vals, by = "id") %>% 
   select(-contains(c("retest")))
+
+
 
 write.csv(post_report, file = "data/2022/post/processed/post_report.csv",
           na = "", row.names = FALSE)
